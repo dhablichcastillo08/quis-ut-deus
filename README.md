@@ -59,48 +59,12 @@ A personal liturgical life dashboard that brings together daily readings, prayer
 
 ---
 
-## 🚀 Getting Started
 
-### Prerequisites
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Git](https://git-scm.com/)
-
-### Setup
-
-1. **Clone the repository**
-
-   ```bash
-   git clone git@github.com:dhablichcastillo08/quis-ut-deus.git
-   cd quis-ut-deus
-   ```
-
-2. **Build and start the containers**
-
-   ```bash
-   docker compose build
-   docker compose up
-   ```
-
-3. **Create the database** (in a separate terminal)
-
-   ```bash
+  
    docker compose run --rm web bin/rails db:create
    docker compose run --rm web bin/rails db:migrate
    docker compose run --rm web bin/rails db:seed
    ```
-
-4. **Visit the app**
-
-   Open [http://localhost:3000](http://localhost:3000)
-
-### Seed Data
-
-The seed file creates a development user and default prayer habits:
-
-- **Email:** `dev@quisutdeus.app`
-- **Password:** `password123`
-- **Habits:** Morning Prayer, Rosary, Mass, Divine Office, Examen, Confession
 
 ---
 
