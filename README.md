@@ -84,7 +84,7 @@ quis-ut-deus/
 
 ## 🗓️ Development Roadmap
 
-- [x] **Phase 1** — Foundation: Docker, Rails, Postgres, Tailwind, Devise, deploy scaffold
+- [] **Phase 1** — Foundation: Docker, Rails, Postgres, Tailwind, Devise, deploy scaffold
 - [ ] **Phase 2** — Liturgical Calendar: API integration, daily readings, color theming
 - [ ] **Phase 3** — Prayer Tracking & Journal: habits, streaks, journal entries, Turbo Streams
 - [ ] **Phase 4** — Dashboard & Polish: charts, notifications, dark mode, responsive design
