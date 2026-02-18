@@ -106,9 +106,7 @@ This project is for personal use.
 
 ## 🙏 Acknowledgments
 
-- Inspired by St. Michael the Archangel and the Catholic Liturgical Tradition
+- Inspired by the Catholic Liturgical Tradition
 - Built with the Ruby on Rails community's incredible ecosystem
 
 ---
-
-*Ad Maiorem Dei Gloriam* 🛡️
