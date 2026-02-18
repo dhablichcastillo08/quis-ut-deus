@@ -27,6 +27,20 @@ gem "jbuilder"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
+# Authentication
+gem "devise"
+
+# Background jobs (will need later for API calls, emails)
+gem "sidekiq", "~> 7.0"
+gem "connection_pool", "< 3.0"
+
+# HTTP client for liturgical API
+gem "httparty"
+
+# Charts and date grouping
+gem "chartkick"
+gem "groupdate"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
