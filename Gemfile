@@ -32,7 +32,7 @@ gem "devise"
 
 # Background jobs (will need later for API calls, emails)
 gem "sidekiq", "~> 7.0"
-gem "connection_pool", "< 3.0"
+gem "connection_pool", "< 4.0"
 
 # HTTP client for liturgical API
 gem "httparty"
