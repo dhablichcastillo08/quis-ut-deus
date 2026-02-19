@@ -31,7 +31,7 @@ gem "jbuilder"
 gem "devise"
 
 # Background jobs (will need later for API calls, emails)
-gem "sidekiq", "~> 7.0"
+gem "sidekiq", "~> 8.0"
 gem "connection_pool", "< 3.0"
 
 # HTTP client for liturgical API
