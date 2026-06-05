@@ -5,45 +5,139 @@
       Quis ut Deus<span class="text-amber-500">?</span>
     </h1>
     <div class="flex items-center gap-4">
-      <span class="text-sm text-slate-500">
-        <%= current_user.email %>
-      </span>
+      <%= link_to "Habits", prayer_habits_path, class: "text-sm text-slate-500 hover:text-slate-800 transition-colors" %>
+      <span class="text-sm text-slate-400"><%= current_user.email %></span>
       <%= button_to "Sign Out", destroy_user_session_path,
           method: :delete,
           class: "text-sm text-slate-400 hover:text-red-500 transition-colors" %>
     </div>
   </nav>
 
-  <!-- Dashboard content -->
   <main class="max-w-4xl mx-auto px-6 py-10">
-    <h2 class="text-2xl font-bold text-slate-800 mb-2">
+    <h2 class="text-2xl font-bold text-slate-800 mb-1">
       Good <%= time_greeting %>, <%= current_user.first_name || "friend" %>
     </h2>
-    <p class="text-slate-500 mb-8">
-      <%= Date.today.strftime("%A, %B %-d, %Y") %>
-    </p>
+    <p class="text-slate-500 mb-8"><%= Date.today.strftime("%A, %B %-d, %Y") %></p>
 
-    <!-- Placeholder cards for future features -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-700 mb-2">Today's Readings</h3>
-        <p class="text-sm text-slate-400">Coming in Phase 2...</p>
+
+      <!-- Today's Readings -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden md:col-span-2">
+        <% if @today_reading %>
+          <!-- Liturgical color bar -->
+          <div class="h-1 <%= liturgical_bar_class(@today_reading.liturgical_color) %>"></div>
+          <div class="p-6">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-block w-2 h-2 rounded-full <%= liturgical_dot_class(@today_reading.liturgical_color) %>"></span>
+                  <span class="text-xs font-semibold uppercase tracking-widest text-slate-400"><%= @today_reading.season&.humanize %></span>
+                  <% if @today_reading.rank.present? %>
+                    <span class="text-slate-300">·</span>
+                    <span class="text-xs text-slate-400"><%= @today_reading.rank %></span>
+                  <% end %>
+                </div>
+                <h3 class="font-semibold text-slate-800 text-lg">
+                  <%= @today_reading.celebration_name.presence || "Today's Mass" %>
+                </h3>
+                <% if @today_reading.celebration_quote.present? %>
+                  <p class="text-sm text-slate-500 italic mt-1">"<%= @today_reading.celebration_quote %>"</p>
+                <% end %>
+              </div>
+              <%= link_to readings_today_path, class: "flex-shrink-0 text-sm text-amber-600 hover:text-amber-500 font-medium transition-colors" do %>
+                Read all &rarr;
+              <% end %>
+            </div>
+
+            <!-- Reading references -->
+            <div class="mt-4 flex flex-wrap gap-2">
+              <% if @today_reading.first_reading.present? %>
+                <span class="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 rounded-full px-3 py-1">
+                  <span class="font-semibold text-amber-600">1st</span>
+                  <%= @today_reading.first_reading %>
+                </span>
+              <% end %>
+              <% if @today_reading.psalm.present? %>
+                <span class="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 rounded-full px-3 py-1">
+                  <span class="font-semibold text-amber-600">Ps</span>
+                  <%= @today_reading.psalm %>
+                </span>
+              <% end %>
+              <% if @today_reading.second_reading.present? %>
+                <span class="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 rounded-full px-3 py-1">
+                  <span class="font-semibold text-amber-600">2nd</span>
+                  <%= @today_reading.second_reading %>
+                </span>
+              <% end %>
+              <% if @today_reading.gospel.present? %>
+                <span class="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 rounded-full px-3 py-1">
+                  <span class="font-semibold text-amber-600">Gsp</span>
+                  <%= @today_reading.gospel %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="p-6">
+            <h3 class="font-semibold text-slate-700 mb-1">Today's Readings</h3>
+            <p class="text-sm text-slate-400">Could not load today's readings. <%= link_to "Try again", dashboard_path, class: "text-amber-600 underline" %>.</p>
+          </div>
+        <% end %>
       </div>
 
+      <!-- Prayer Tracker -->
       <div class="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-700 mb-2">Prayer Tracker</h3>
-        <p class="text-sm text-slate-400">Coming in Phase 3...</p>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-slate-700">Prayer Tracker</h3>
+          <%= link_to "Manage", prayer_habits_path, class: "text-xs text-amber-600 hover:text-amber-500 transition-colors" %>
+        </div>
+
+        <% if @prayer_habits.any? %>
+          <ul class="space-y-3">
+            <% @prayer_habits.each do |habit| %>
+              <li class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <%= turbo_frame_tag "habit_#{habit.id}_check" do %>
+                    <% if habit.completed_today? %>
+                      <%= button_to today_prayer_habit_prayer_logs_path(habit), method: :delete,
+                          class: "w-5 h-5 rounded-full bg-amber-500 border-2 border-amber-500 flex items-center justify-center text-white text-xs hover:bg-amber-400 transition-colors",
+                          data: { turbo_frame: "habit_#{habit.id}_check" } do %>
+                        &#10003;
+                      <% end %>
+                    <% else %>
+                      <%= button_to prayer_habit_prayer_logs_path(habit), method: :post,
+                          class: "w-5 h-5 rounded-full border-2 border-slate-300 hover:border-amber-400 transition-colors",
+                          data: { turbo_frame: "habit_#{habit.id}_check" } do %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                  <span class="text-sm text-slate-700"><%= habit.name %></span>
+                </div>
+                <span class="text-xs text-slate-400">
+                  <% streak = habit.current_streak %>
+                  <% if streak > 0 %>
+                    <%= streak %> day<%= streak == 1 ? "" : "s" %> &#x1F525;
+                  <% end %>
+                </span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-sm text-slate-400 mb-3">No habits set up yet.</p>
+          <%= link_to "Add your first habit &rarr;".html_safe, new_prayer_habit_path,
+              class: "text-sm text-amber-600 hover:text-amber-500 font-medium transition-colors" %>
+        <% end %>
       </div>
 
+      <!-- Journal -->
       <div class="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-700 mb-2">Journal</h3>
-        <p class="text-sm text-slate-400">Coming in Phase 3...</p>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-slate-700">Journal</h3>
+        </div>
+        <p class="text-sm text-slate-400 mb-3">Reflect on today's readings and your prayer.</p>
+        <p class="text-sm text-slate-300">Coming soon...</p>
       </div>
 
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-700 mb-2">Streaks & Progress</h3>
-        <p class="text-sm text-slate-400">Coming in Phase 4...</p>
-      </div>
     </div>
   </main>
 </div>

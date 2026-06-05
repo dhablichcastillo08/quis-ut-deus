@@ -1,0 +1,126 @@
+<%= turbo_frame_tag "daily_reading" do %>
+  <div class="min-h-screen bg-slate-900 text-slate-100">
+
+    <!-- Nav -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-serif font-bold text-white">
+        Quis ut Deus<span class="text-amber-500">?</span>
+      </h1>
+      <div class="flex items-center gap-4">
+        <%= link_to "Dashboard", dashboard_path, class: "text-sm text-slate-400 hover:text-amber-400 transition-colors" %>
+      </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-6 py-10">
+
+      <% if @reading %>
+
+        <!-- Liturgical color bar -->
+        <div class="h-1 rounded-full mb-8 <%= liturgical_bar_class(@reading.liturgical_color) %>"></div>
+
+        <!-- Date navigation -->
+        <div class="flex items-center justify-between mb-6">
+          <%= link_to reading_path((@date - 1.day).to_s),
+              class: "flex items-center gap-1 text-sm text-slate-400 hover:text-amber-400 transition-colors",
+              data: { turbo_frame: "daily_reading" } do %>
+            <span>&#8592;</span>
+            <span><%= (@date - 1.day).strftime("%b %-d") %></span>
+          <% end %>
+
+          <div class="text-center">
+            <p class="text-lg font-semibold text-white"><%= @date.strftime("%A, %B %-d, %Y") %></p>
+            <div class="flex items-center justify-center gap-2 mt-1">
+              <span class="inline-block w-2 h-2 rounded-full <%= liturgical_dot_class(@reading.liturgical_color) %>"></span>
+              <span class="text-sm text-slate-400 capitalize"><%= @reading.season&.humanize %></span>
+              <% if @reading.rank.present? %>
+                <span class="text-slate-600">·</span>
+                <span class="text-xs text-slate-500"><%= @reading.rank %></span>
+              <% end %>
+            </div>
+          </div>
+
+          <%= link_to reading_path((@date + 1.day).to_s),
+              class: "flex items-center gap-1 text-sm text-slate-400 hover:text-amber-400 transition-colors",
+              data: { turbo_frame: "daily_reading" } do %>
+            <span><%= (@date + 1.day).strftime("%b %-d") %></span>
+            <span>&#8594;</span>
+          <% end %>
+        </div>
+
+        <!-- Celebration / Feast -->
+        <% if @reading.celebration_name.present? %>
+          <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-6">
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <% if @reading.celebration_type.present? %>
+                  <span class="text-xs font-semibold uppercase tracking-widest <%= liturgical_badge_class(@reading.liturgical_color) %> px-2 py-0.5 rounded mb-2 inline-block">
+                    <%= @reading.celebration_type.gsub("_", " ").titleize %>
+                  </span>
+                <% end %>
+                <h2 class="text-xl font-serif font-bold text-white mt-1"><%= @reading.celebration_name %></h2>
+                <% if @reading.celebration_quote.present? %>
+                  <blockquote class="mt-3 text-slate-300 italic border-l-2 border-amber-500 pl-4">
+                    "<%= @reading.celebration_quote %>"
+                  </blockquote>
+                <% end %>
+                <% if @reading.celebration_description.present? %>
+                  <p class="mt-3 text-sm text-slate-400 leading-relaxed"><%= @reading.celebration_description %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Readings -->
+        <div class="space-y-4">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-slate-500">Mass Readings</h3>
+
+          <% if @reading.first_reading.present? %>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+              <p class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1">First Reading</p>
+              <p class="text-white font-medium"><%= @reading.first_reading %></p>
+            </div>
+          <% end %>
+
+          <% if @reading.psalm.present? %>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+              <p class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1">Responsorial Psalm</p>
+              <p class="text-white font-medium"><%= @reading.psalm %></p>
+            </div>
+          <% end %>
+
+          <% if @reading.second_reading.present? %>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+              <p class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1">Second Reading</p>
+              <p class="text-white font-medium"><%= @reading.second_reading %></p>
+            </div>
+          <% end %>
+
+          <% if @reading.gospel.present? %>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+              <p class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1">Gospel</p>
+              <p class="text-white font-medium"><%= @reading.gospel %></p>
+            </div>
+          <% end %>
+
+          <% if @reading.usccb_link.present? %>
+            <div class="pt-2 text-center">
+              <%= link_to @reading.usccb_link, target: "_blank", rel: "noopener noreferrer",
+                  class: "inline-flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 transition-colors" do %>
+                Read full texts at USCCB &#8599;
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+      <% else %>
+        <!-- No data state -->
+        <div class="text-center py-20">
+          <p class="text-slate-500 text-lg">No reading available for this date.</p>
+          <%= link_to "Go to today", readings_today_path, class: "mt-4 inline-block text-amber-400 hover:text-amber-300 text-sm" %>
+        </div>
+      <% end %>
+
+    </main>
+  </div>
+<% end %>

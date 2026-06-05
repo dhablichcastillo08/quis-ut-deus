@@ -1,0 +1,10 @@
+# config/schedule.yml
+# Cron schedule loaded by sidekiq-cron at worker startup.
+# Each top-level key is a job name; sidekiq-cron reads this file by default
+# (Sidekiq::Cron.configuration.cron_schedule_file => "config/schedule.yml").
+
+fetch_daily_reading:
+  cron: "0 5 * * * America/New_York"                 # every day at 05:00 (server time zone)
+  class: "FetchDailyReadingJob"      # the ActiveJob to run
+  queue: default                     # must match a queue in config/sidekiq.yml
+  description: "Fetch today's liturgical reading"
